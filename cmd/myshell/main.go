@@ -23,6 +23,6 @@ func parseCommand(command string) {
 	case "echo":
 	case "cd":
 	default:
-		fmt.Printf("%s command not found\n", command)
+		fmt.Printf("%s: command not found\n", command)
 	}
 }
