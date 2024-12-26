@@ -29,6 +29,7 @@ func main() {
 func parseCommand(command string, args []string) {
 	switch command {
 	case "echo":
+		echo(args)
 	case "cd":
 	case "exit":
 		exit(args)
@@ -46,4 +47,8 @@ func exit(args []string) {
 		os.Exit(0)
 	}
 	os.Exit(int(exitCode))
+}
+
+func echo(args []string) {
+	fmt.Printf("%s\n", strings.Join(args, " "))
 }
