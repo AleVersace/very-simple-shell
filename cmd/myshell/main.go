@@ -8,16 +8,18 @@ import (
 )
 
 func main() {
-	fmt.Fprint(os.Stdout, "$ ")
+	for {
+		fmt.Fprint(os.Stdout, "$ ")
 
-	// Wait for user input
-	command, err := bufio.NewReader(os.Stdin).ReadString('\n')
-	if err != nil {
-		_, _ = fmt.Fprintln(os.Stderr, err)
+		// Wait for user input
+		command, err := bufio.NewReader(os.Stdin).ReadString('\n')
+		if err != nil {
+			_, _ = fmt.Fprintln(os.Stderr, err)
+		}
+		command = strings.TrimSpace(command)
+
+		parseCommand(command)
 	}
-	command = strings.TrimSpace(command)
-
-	parseCommand(command)
 }
 
 func parseCommand(command string) {
