@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -14,6 +15,7 @@ func main() {
 	if err != nil {
 		_, _ = fmt.Fprintln(os.Stderr, err)
 	}
+	command = strings.TrimSpace(command)
 
 	parseCommand(command)
 }
