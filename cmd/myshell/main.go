@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+var TYPE = [...]string{"echo", "type", "exit", "cd"}
+
 func main() {
 	for {
 		_, _ = fmt.Fprint(os.Stdout, "$ ")
@@ -33,6 +35,8 @@ func parseCommand(command string, args []string) {
 	case "cd":
 	case "exit":
 		exit(args)
+	case "type":
+		typeCommand(args)
 	default:
 		fmt.Printf("%s: command not found\n", command)
 	}
@@ -51,4 +55,17 @@ func exit(args []string) {
 
 func echo(args []string) {
 	fmt.Printf("%s\n", strings.Join(args, " "))
+}
+
+func typeCommand(args []string) {
+	if len(args) == 0 {
+		return
+	}
+	for _, command := range TYPE {
+		if command == args[0] {
+			fmt.Printf("%s is a shell builtin\n", command)
+			return
+		}
+	}
+	fmt.Printf("%s: not found\n", args[0])
 }
