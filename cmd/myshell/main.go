@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -117,14 +118,20 @@ func typeCommand(args []string) {
 }
 
 func typeCommandInPath(command string, args []string) bool {
+	var pathDelimiter string
+	if runtime.GOOS == "windows" {
+		pathDelimiter = ";"
+	} else {
+		pathDelimiter = ":"
+	}
+
 	pathsEnv := os.Getenv("PATH")
-	fmt.Printf("%s\n", pathsEnv)
-	paths := strings.Split(pathsEnv, ":")
+	paths := strings.Split(pathsEnv, pathDelimiter)
 	for _, path := range paths {
 		dir, err := os.Open(path)
 		if err != nil {
-			commandNotFound(command)
-			return false
+			// commandNotFound(command)
+			continue
 		}
 		defer dir.Close()
 		files, err := dir.Readdir(-1)
