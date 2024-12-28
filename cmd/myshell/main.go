@@ -118,6 +118,7 @@ func typeCommand(args []string) {
 
 func typeCommandInPath(command string, args []string) bool {
 	pathsEnv := os.Getenv("PATH")
+	fmt.Printf("%s\n", pathsEnv)
 	paths := strings.Split(pathsEnv, ":")
 	for _, path := range paths {
 		dir, err := os.Open(path)
