@@ -110,31 +110,34 @@ func typeCommand(args []string) {
 	}
 
 	// check if in PATH
-	typeCommandInPath(args[0], args[1:])
-
-	fmt.Printf("%s: not found\n", args[0])
+	found := typeCommandInPath(args[0], args[1:])
+	if !found {
+		fmt.Printf("%s: not found\n", args[0])
+	}
 }
 
-func typeCommandInPath(command string, args []string) {
+func typeCommandInPath(command string, args []string) bool {
 	pathsEnv := os.Getenv("PATH")
 	paths := strings.Split(pathsEnv, ":")
 	for _, path := range paths {
 		dir, err := os.Open(path)
 		if err != nil {
 			commandNotFound(command)
+			return false
 		}
 		defer dir.Close()
 		files, err := dir.Readdir(-1)
 		if err != nil {
 			commandNotFound(command)
+			return false
 		}
 		for _, file := range files {
 			if file.IsDir() {
 				continue
 			}
 			if file.Name() == command {
-				fmt.Printf("%s is %s\n", command, path)
-				return
+				fmt.Printf("%s is %s/%s\n", command, path, command)
+				return true
 			}
 		}
 	}
