@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 )
@@ -38,8 +39,46 @@ func parseCommand(command string, args []string) {
 	case "type":
 		typeCommand(args)
 	default:
-		fmt.Printf("%s: command not found\n", command)
+		execCommandInPath(command, args)
 	}
+}
+
+func execCommandInPath(command string, args []string) {
+	pathsEnv := os.Getenv("PATH")
+	paths := strings.Split(pathsEnv, ":")
+	for _, path := range paths {
+		dir, err := os.Open(path)
+		if err != nil {
+			commandNotFound(command)
+		}
+		defer dir.Close()
+		files, err := dir.Readdir(-1)
+		if err != nil {
+			commandNotFound(command)
+		}
+		for _, file := range files {
+			if file.IsDir() {
+				continue
+			}
+			if file.Name() == command {
+				execCommand(command, args)
+				return
+			}
+		}
+	}
+}
+
+func execCommand(command string, args []string) {
+	cmd := exec.Command(command, args...)
+	stdout, err := cmd.Output()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	fmt.Println(string(stdout))
+}
+
+func commandNotFound(command string) {
+	fmt.Printf("%s: command not found\n", command)
 }
 
 func exit(args []string) {
@@ -61,11 +100,42 @@ func typeCommand(args []string) {
 	if len(args) == 0 {
 		return
 	}
+
+	// check if built-in
 	for _, command := range TYPE {
 		if command == args[0] {
 			fmt.Printf("%s is a shell builtin\n", command)
 			return
 		}
 	}
+
+	// check if in PATH
+	typeCommandInPath(args[0], args[1:])
+
 	fmt.Printf("%s: not found\n", args[0])
+}
+
+func typeCommandInPath(command string, args []string) {
+	pathsEnv := os.Getenv("PATH")
+	paths := strings.Split(pathsEnv, ":")
+	for _, path := range paths {
+		dir, err := os.Open(path)
+		if err != nil {
+			commandNotFound(command)
+		}
+		defer dir.Close()
+		files, err := dir.Readdir(-1)
+		if err != nil {
+			commandNotFound(command)
+		}
+		for _, file := range files {
+			if file.IsDir() {
+				continue
+			}
+			if file.Name() == command {
+				fmt.Printf("%s is %s\n", command, path)
+				return
+			}
+		}
+	}
 }
