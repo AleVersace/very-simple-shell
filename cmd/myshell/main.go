@@ -141,4 +141,5 @@ func typeCommandInPath(command string, args []string) bool {
 			}
 		}
 	}
+	return false
 }
