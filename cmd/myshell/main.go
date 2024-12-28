@@ -81,9 +81,9 @@ func execCommand(command string, args []string) {
 	cmd := exec.Command(command, args...)
 	stdout, err := cmd.Output()
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Print(err.Error())
 	}
-	fmt.Println(string(stdout))
+	fmt.Print(string(stdout))
 }
 
 func commandNotFound(command string) {
