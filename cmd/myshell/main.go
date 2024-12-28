@@ -136,8 +136,8 @@ func typeCommandInPath(command string, args []string) bool {
 		defer dir.Close()
 		files, err := dir.Readdir(-1)
 		if err != nil {
-			commandNotFound(command)
-			return false
+			// commandNotFound(command)
+			continue
 		}
 		for _, file := range files {
 			if file.IsDir() {
