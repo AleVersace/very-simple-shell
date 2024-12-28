@@ -45,17 +45,24 @@ func parseCommand(command string, args []string) {
 }
 
 func execCommandInPath(command string, args []string) {
+	var pathDelimiter string
+	if runtime.GOOS == "windows" {
+		pathDelimiter = ";"
+	} else {
+		pathDelimiter = ":"
+	}
+
 	pathsEnv := os.Getenv("PATH")
-	paths := strings.Split(pathsEnv, ":")
+	paths := strings.Split(pathsEnv, pathDelimiter)
 	for _, path := range paths {
 		dir, err := os.Open(path)
 		if err != nil {
-			commandNotFound(command)
+			continue
 		}
 		defer dir.Close()
 		files, err := dir.Readdir(-1)
 		if err != nil {
-			commandNotFound(command)
+			continue
 		}
 		for _, file := range files {
 			if file.IsDir() {
@@ -67,6 +74,7 @@ func execCommandInPath(command string, args []string) {
 			}
 		}
 	}
+	commandNotFound(command)
 }
 
 func execCommand(command string, args []string) {
@@ -130,13 +138,11 @@ func typeCommandInPath(command string, args []string) bool {
 	for _, path := range paths {
 		dir, err := os.Open(path)
 		if err != nil {
-			// commandNotFound(command)
 			continue
 		}
 		defer dir.Close()
 		files, err := dir.Readdir(-1)
 		if err != nil {
-			// commandNotFound(command)
 			continue
 		}
 		for _, file := range files {
