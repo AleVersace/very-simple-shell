@@ -57,7 +57,7 @@ func splitArgs(input string) []string {
 		case '\n':
 		case ' ':
 			if !inQuotes {
-				if quoteIdxStart == i-1 {
+				if input[i-1] == '\'' { // if previous char was single quote new arg was already registered
 					continue
 				}
 				newArg := strings.TrimSpace(input[prevIdxSpace:i])
