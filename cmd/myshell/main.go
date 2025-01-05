@@ -156,7 +156,7 @@ func cat(args []string) {
 		scanner := bufio.NewScanner(file)
 		for scanner.Scan() {
 			line := scanner.Text()
-			fmt.Printf("Line: %s\n", line)
+			fmt.Printf("%s", line)
 		}
 		if err := scanner.Err(); err != nil {
 			fmt.Print("scanning file: %w", err)
