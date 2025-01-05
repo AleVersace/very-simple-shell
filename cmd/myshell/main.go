@@ -51,8 +51,14 @@ func splitArgs(input string) []string {
 				inQuotes = true
 				quoteIdxStart = i
 			} else {
+				if i+1 < len(input) && input[i+1] == '\'' {
+					// go ahead if next char is single quote
+					i++
+					continue
+				}
 				inQuotes = false
-				args = append(args, strings.TrimSpace(input[quoteIdxStart+1:i]))
+				newArg := strings.TrimSpace(strings.ReplaceAll(input[quoteIdxStart+1:i], "'", ""))
+				args = append(args, newArg)
 			}
 		case '\n':
 		case ' ':
