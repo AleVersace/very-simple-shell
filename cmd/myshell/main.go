@@ -52,7 +52,7 @@ func splitArgs(input string) []string {
 				quoteIdxStart = i
 			} else {
 				inQuotes = false
-				args = append(args, input[quoteIdxStart+1:i])
+				args = append(args, strings.TrimSpace(input[quoteIdxStart+1:i]))
 			}
 		case '\n':
 		case ' ':
@@ -60,14 +60,17 @@ func splitArgs(input string) []string {
 				if quoteIdxStart == i-1 {
 					continue
 				}
-				args = append(args, input[prevIdxSpace:i])
+				newArg := strings.TrimSpace(input[prevIdxSpace:i])
+				if newArg != "" {
+					args = append(args, newArg)
+				}
 				prevIdxSpace = i
 			}
 		}
 	}
 
 	if len(input) > 0 && input[len(input)-1] != '\'' {
-		args = append(args, input[prevIdxSpace:])
+		args = append(args, strings.TrimSpace(input[prevIdxSpace:]))
 	}
 
 	return args
