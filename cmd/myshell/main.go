@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-var TYPE = [...]string{"echo", "type", "exit", "cd"}
+var TYPE = [...]string{"echo", "type", "exit", "cd", "cat"}
 
 func main() {
 	for {
@@ -82,6 +82,8 @@ func parseCommand(command string, args []string) {
 		exit(args)
 	case "type":
 		typeCommand(args)
+	case "cat":
+		cat(args)
 	default:
 		execCommandInPath(command, args)
 	}
@@ -131,6 +133,27 @@ func execCommand(command string, args []string) {
 
 func commandNotFound(command string) {
 	fmt.Printf("%s: command not found\n", command)
+}
+
+func cat(args []string) {
+	for _, filename := range args {
+		file, err := os.Open(filename)
+		if err != nil {
+			fmt.Print("opening file: %w", err)
+			continue
+		}
+		defer file.Close()
+
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			line := scanner.Text()
+			fmt.Printf("Line: %s\n", line)
+		}
+		if err := scanner.Err(); err != nil {
+			fmt.Print("scanning file: %w", err)
+			continue
+		}
+	}
 }
 
 func exit(args []string) {
