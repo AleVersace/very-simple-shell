@@ -24,6 +24,9 @@ func main() {
 		command = strings.TrimSpace(command)
 
 		programArgs := splitArgs(command)
+		if len(programArgs) == 0 {
+			continue
+		}
 		program := programArgs[0]
 		if len(programArgs) > 1 {
 			programArgs = programArgs[1:]
