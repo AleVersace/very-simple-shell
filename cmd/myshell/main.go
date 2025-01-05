@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-var TYPE = [...]string{"echo", "type", "exit", "cd", "cat"}
+var TYPE = [...]string{"echo", "type", "exit", "cd"}
 
 func main() {
 	for {
@@ -91,8 +91,6 @@ func parseCommand(command string, args []string) {
 		exit(args)
 	case "type":
 		typeCommand(args)
-	case "cat":
-		cat(args)
 	default:
 		execCommandInPath(command, args)
 	}
