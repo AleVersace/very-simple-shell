@@ -23,11 +23,51 @@ func main() {
 		}
 		command = strings.TrimSpace(command)
 
-		programArgs := strings.Split(command, " ")
+		programArgs := splitArgs(command)
 		program := programArgs[0]
-		programArgs = programArgs[1:]
+		if len(programArgs) > 1 {
+			programArgs = programArgs[1:]
+			for idx, arg := range programArgs {
+				programArgs[idx] = strings.Trim(arg, " ")
+			}
+		}
 		parseCommand(program, programArgs)
 	}
+}
+
+func splitArgs(input string) []string {
+	var args []string
+	prevIdxSpace := 0
+	quoteIdxStart := 0
+	inQuotes := false
+
+	for i := 0; i < len(input); i++ {
+		switch input[i] {
+		case '\'':
+			if !inQuotes {
+				inQuotes = true
+				quoteIdxStart = i
+			} else {
+				inQuotes = false
+				args = append(args, input[quoteIdxStart+1:i])
+			}
+		case '\n':
+		case ' ':
+			if !inQuotes {
+				if quoteIdxStart == i-1 {
+					continue
+				}
+				args = append(args, input[prevIdxSpace:i])
+				prevIdxSpace = i
+			}
+		}
+	}
+
+	if len(input) > 0 && input[len(input)-1] != '\'' {
+		args = append(args, input[prevIdxSpace:])
+	}
+
+	return args
 }
 
 func parseCommand(command string, args []string) {
