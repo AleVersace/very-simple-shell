@@ -163,6 +163,7 @@ func cat(args []string) {
 			continue
 		}
 	}
+	fmt.Print("\n")
 }
 
 func exit(args []string) {
