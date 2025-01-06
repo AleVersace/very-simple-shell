@@ -53,7 +53,6 @@ func splitArgs(input string) []string {
 				continue
 			}
 			if !inDoubleQuotes {
-				inDoubleQuotes = true
 				doubleQuoteIdxStart = i
 			} else {
 				if i+1 < len(input) && input[i+1] == '"' {
@@ -61,13 +60,12 @@ func splitArgs(input string) []string {
 					i++
 					continue
 				}
-				inDoubleQuotes = false
 				newArg := strings.TrimSpace(strings.ReplaceAll(input[doubleQuoteIdxStart+1:i], "\"", ""))
 				args = append(args, newArg)
 			}
+			inDoubleQuotes = !inDoubleQuotes
 		case '\'':
 			if !inQuotes {
-				inQuotes = true
 				quoteIdxStart = i
 			} else {
 				if i+1 < len(input) && input[i+1] == '\'' {
@@ -75,10 +73,10 @@ func splitArgs(input string) []string {
 					i++
 					continue
 				}
-				inQuotes = false
 				newArg := strings.TrimSpace(strings.ReplaceAll(input[quoteIdxStart+1:i], "'", ""))
 				args = append(args, newArg)
 			}
+			inQuotes = !inQuotes
 		case '\n':
 		case ' ':
 			if !inQuotes && !inDoubleQuotes {
