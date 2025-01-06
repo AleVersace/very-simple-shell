@@ -86,22 +86,24 @@ func splitArgs(input string) []string {
 				if input[i-1] == ' ' {
 					prevIdxSpace = i
 				}
-				newArg := strings.TrimSpace(input[prevIdxSpace:i])
+				newArg := strings.ReplaceAll(strings.TrimSpace(input[prevIdxSpace:i]), "\\", "")
 				if newArg != "" {
 					args = append(args, newArg)
 				}
 				prevIdxSpace = i
 			}
 		case '\\':
-			if i+1 < len(input) && (input[i+1] == '"' || input[i+1] == '\\' || input[i+1] == '$') {
-				i++
-				continue
+			if !inQuotes && !inDoubleQuotes {
+				if i+1 < len(input) && (input[i+1] == '"' || input[i+1] == '\\' || input[i+1] == '$' || input[i+1] == ' ') {
+					i++
+					continue
+				}
 			}
 		}
 	}
 
 	if len(input) > 0 && input[len(input)-1] != '\'' && input[len(input)-1] != '"' {
-		args = append(args, strings.TrimSpace(input[prevIdxSpace:]))
+		args = append(args, strings.ReplaceAll(strings.TrimSpace(input[prevIdxSpace:]), "\\", ""))
 	}
 
 	return args
