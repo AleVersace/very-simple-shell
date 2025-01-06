@@ -43,9 +43,28 @@ func splitArgs(input string) []string {
 	prevIdxSpace := 0
 	quoteIdxStart := 0
 	inQuotes := false
+	inDoubleQuotes := false
+	doubleQuoteIdxStart := 0
 
 	for i := 0; i < len(input); i++ {
 		switch input[i] {
+		case '"':
+			if i > 0 && input[i-1] == '\\' {
+				continue
+			}
+			if !inDoubleQuotes {
+				inDoubleQuotes = true
+				doubleQuoteIdxStart = i
+			} else {
+				if i+1 < len(input) && input[i+1] == '"' {
+					// go ahead if next char is double quote
+					i++
+					continue
+				}
+				inDoubleQuotes = false
+				newArg := strings.TrimSpace(strings.ReplaceAll(input[doubleQuoteIdxStart+1:i], "\"", ""))
+				args = append(args, newArg)
+			}
 		case '\'':
 			if !inQuotes {
 				inQuotes = true
@@ -62,9 +81,12 @@ func splitArgs(input string) []string {
 			}
 		case '\n':
 		case ' ':
-			if !inQuotes {
-				if input[i-1] == '\'' { // if previous char was single quote new arg was already registered
+			if !inQuotes && !inDoubleQuotes {
+				if input[i-1] == '\'' || input[i-1] == '"' { // if previous char was quote new arg was already registered
 					continue
+				}
+				if input[i-1] == ' ' {
+					prevIdxSpace = i
 				}
 				newArg := strings.TrimSpace(input[prevIdxSpace:i])
 				if newArg != "" {
@@ -72,10 +94,15 @@ func splitArgs(input string) []string {
 				}
 				prevIdxSpace = i
 			}
+		case '\\':
+			if i+1 < len(input) && (input[i+1] == '"' || input[i+1] == '\\' || input[i+1] == '$') {
+				i++
+				continue
+			}
 		}
 	}
 
-	if len(input) > 0 && input[len(input)-1] != '\'' {
+	if len(input) > 0 && input[len(input)-1] != '\'' && input[len(input)-1] != '"' {
 		args = append(args, strings.TrimSpace(input[prevIdxSpace:]))
 	}
 
