@@ -65,6 +65,9 @@ func splitArgs(input string) []string {
 			}
 			inDoubleQuotes = !inDoubleQuotes
 		case '\'':
+			if i > 0 && input[i-1] == '\\' {
+				continue
+			}
 			if !inQuotes {
 				quoteIdxStart = i
 			} else {
@@ -94,7 +97,7 @@ func splitArgs(input string) []string {
 			}
 		case '\\':
 			if !inQuotes && !inDoubleQuotes {
-				if i+1 < len(input) && (input[i+1] == '"' || input[i+1] == '\\' || input[i+1] == '$' || input[i+1] == ' ') {
+				if i+1 < len(input) && (input[i+1] == '"' || input[i+1] == '\'' || input[i+1] == '\\' || input[i+1] == '$' || input[i+1] == ' ') {
 					i++
 					continue
 				}
@@ -102,7 +105,7 @@ func splitArgs(input string) []string {
 		}
 	}
 
-	if len(input) > 0 && input[len(input)-1] != '\'' && input[len(input)-1] != '"' {
+	if len(input) > 0 {
 		args = append(args, strings.ReplaceAll(strings.TrimSpace(input[prevIdxSpace:]), "\\", ""))
 	}
 
