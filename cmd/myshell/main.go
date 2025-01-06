@@ -60,6 +60,7 @@ func splitArgs(input string) []string {
 					i++
 					continue
 				}
+				prevIdxSpace = i + 1
 				newArg := strings.TrimSpace(strings.ReplaceAll(input[doubleQuoteIdxStart+1:i], "\"", ""))
 				args = append(args, newArg)
 			}
@@ -76,6 +77,7 @@ func splitArgs(input string) []string {
 					i++
 					continue
 				}
+				prevIdxSpace = i + 1
 				newArg := strings.TrimSpace(strings.ReplaceAll(input[quoteIdxStart+1:i], "'", ""))
 				args = append(args, newArg)
 			}
@@ -105,7 +107,8 @@ func splitArgs(input string) []string {
 		}
 	}
 
-	if len(input) > 0 {
+	length := len(input)
+	if length > 0 {
 		args = append(args, strings.ReplaceAll(strings.TrimSpace(input[prevIdxSpace:]), "\\", ""))
 	}
 
