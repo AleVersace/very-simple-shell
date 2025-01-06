@@ -164,10 +164,10 @@ func execCommandInPath(command string, args []string) {
 
 func execCommand(command string, args []string) {
 	cmd := exec.Command(command, args...)
-	stdout, err := cmd.Output()
-	if err != nil {
-		fmt.Print(err.Error())
-	}
+	stdout, _ := cmd.Output()
+	// if err != nil {
+	// 	fmt.Print(err.Error())
+	// }
 	fmt.Print(string(stdout))
 }
 
